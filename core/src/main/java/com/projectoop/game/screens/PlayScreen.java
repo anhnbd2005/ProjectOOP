@@ -233,10 +233,11 @@ public class PlayScreen implements Screen {
         for (Item item : items){
             item.draw(game.batch);
         }
+
         game.batch.end();
 
         //draw head of display
-        healthbar.update(delta);
+         healthbar.update(delta);
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);//select camera position
         hud.stage.draw();
 

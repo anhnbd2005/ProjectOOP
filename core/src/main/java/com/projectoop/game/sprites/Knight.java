@@ -68,6 +68,8 @@ public class Knight extends Sprite {
     private boolean playSound2;
 
     public Knight(PlayScreen screen){
+        Health = 100;        // Giá trị khởi tạo cho sức khỏe hiện tại
+        HealthMax = 100;
 
         this.world = screen.getWorld();
         currentState = State.STANDING;

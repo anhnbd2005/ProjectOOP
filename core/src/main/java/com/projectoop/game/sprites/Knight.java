@@ -333,7 +333,7 @@ public class Knight extends Sprite {
             }
             else {//create arrow
                 int arrowDirection = (isRunningRight) ? 1 : -1;
-                PlayScreen.bulletManager.addBullet(b2body.getPosition().x, b2body.getPosition().y, arrowDirection);
+                PlayScreen.bulletManager.addBullet(b2body.getPosition().x, b2body.getPosition().y, arrowDirection, "Arrow");
                 isAttacking3 = false;
                 knightArrowSound.play();
             }
@@ -374,6 +374,7 @@ public class Knight extends Sprite {
     }
 
     public int getHealthMax() {
+
         return HealthMax;
     }
 }

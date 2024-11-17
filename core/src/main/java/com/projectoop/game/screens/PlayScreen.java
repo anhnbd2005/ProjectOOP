@@ -237,7 +237,7 @@ public class PlayScreen implements Screen {
         game.batch.end();
 
         //draw head of display
-         healthbar.update(delta);
+       //  healthbar.update(delta);
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);//select camera position
         hud.stage.draw();
 
@@ -295,6 +295,7 @@ public class PlayScreen implements Screen {
         return gamePort;
     }
     public Knight getPlayer() {
+
         return player;
     }
 

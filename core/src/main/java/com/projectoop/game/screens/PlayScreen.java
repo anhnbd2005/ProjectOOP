@@ -55,7 +55,7 @@ public class PlayScreen implements Screen {
     private Knight player;
 
     private Array<Item> items;
-    private Array<Item> itemsToRemove;
+    public Array<Item> itemsToRemove;
     private LinkedBlockingQueue<ItemDef> itemsToSpawn;
 
     private Music music;
@@ -177,6 +177,7 @@ public class PlayScreen implements Screen {
         for (Item item : items){
             item.update(dt);
         }
+        items.removeAll(itemsToRemove, true);
 
         hud.update(dt);
         healthbar.update(dt);

@@ -33,7 +33,7 @@ public class BulletManager {
                 bullet = null;
                 break;
         }
-        bullets.add(bullet);
+        if (bullet != null) bullets.add(bullet);
     }
 
     public void update(float dt){

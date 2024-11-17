@@ -3,6 +3,7 @@ package com.projectoop.game.sprites.weapons;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.projectoop.game.GameWorld;
 import com.projectoop.game.screens.PlayScreen;
@@ -14,8 +15,9 @@ public class Arrow extends Bullet {
     private final float scaleX = 1.2f;
     private final float scaleY = 1.2f;
 
-    public Arrow(PlayScreen screen, float x, float y, int direction) {
-        super(screen, x, y, direction);
+    public Arrow(PlayScreen screen, float x, float y, int direction){
+    super(screen, x, y, direction);
+    this.velocity = new Vector2(2.5f * direction, 0);
     }
 
     protected void prepareAnimation() {

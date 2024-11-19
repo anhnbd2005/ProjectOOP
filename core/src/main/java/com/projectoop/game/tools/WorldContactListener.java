@@ -11,6 +11,7 @@ import com.projectoop.game.sprites.enemy.Enemy;
 import com.projectoop.game.sprites.items.Item;
 import com.projectoop.game.sprites.trap.InteractiveTileObject;
 import com.projectoop.game.sprites.weapons.Arrow;
+import com.projectoop.game.sprites.weapons.BossBall;
 import com.projectoop.game.sprites.weapons.FireBall;
 
 public class WorldContactListener implements ContactListener {
@@ -115,6 +116,28 @@ public class WorldContactListener implements ContactListener {
                 //Gdx.app.log("Arrow", "Object");
                 FireBall fireBall = (FireBall) ((fixA.getFilterData().categoryBits == GameWorld.FIREBALL_BIT) ? fixA.getUserData() : fixB.getUserData());
                 fireBall.destroy();
+                break;
+                //bossball collision
+            case GameWorld.KNIGHT_BIT | GameWorld.BOSSBALL_BIT://test
+                //Gdx.app.log("Arrow", "Enemy");
+                if(fixA.getFilterData().categoryBits == GameWorld.BOSSBALL_BIT) {
+                    Gdx.app.log("Enemy hit", "");
+                    ((BossBall)(fixA.getUserData())).destroy();
+                    screen.getPlayer().hurtingCallBack();
+                    //((Knight)(fixB.getUserData())).hurtingCallBack();
+                }
+                else {
+                    Gdx.app.log("Enemy hit", "");
+                    ((BossBall)(fixB.getUserData())).destroy();
+                    screen.getPlayer().hurtingCallBack();
+                    //((Knight)(fixA.getUserData())).hurtingCallBack();
+                }
+                break;
+            case GameWorld.GROUND_BIT | GameWorld.BOSSBALL_BIT:
+            case GameWorld.CHEST_BIT | GameWorld.BOSSBALL_BIT:
+                //Gdx.app.log("Arrow", "Object");
+                BossBall bossBall = (BossBall) ((fixA.getFilterData().categoryBits == GameWorld.FIREBALL_BIT) ? fixA.getUserData() : fixB.getUserData());
+                bossBall.destroy();
                 break;
             case GameWorld.CHEST_BIT | GameWorld.KNIGHT_BIT:
                 //Gdx.app.log("Knight", "Open Chest");

@@ -154,12 +154,13 @@ public class PlayScreen implements Screen {
                 enemy.b2body.setActive(true);//optimize to avoid lagging
             }
         }
-//        for (Enemy enemy : creator.getFlyEnemies()){
-//            enemy.update(dt);
-//            if (enemy.getX() < player.getX() + (GameWorld.V_WIDTH/2 + 4 * 16)/GameWorld.PPM){
-//                enemy.b2body.setActive(true);//optimize to avoid lagging
-//            }
-//        }
+        for (Enemy enemy : creator.getBosses()){
+            enemy.update(dt);
+            if (enemy.getX() < player.getX() + (GameWorld.V_WIDTH/2 + 4 * 16)/GameWorld.PPM){
+                enemy.b2body.setActive(true);//optimize to avoid lagging
+            }
+        }
+
 
         for (EffectedObject eobj : creator.getChests()){
             eobj.update(dt);
@@ -211,6 +212,9 @@ public class PlayScreen implements Screen {
         game.batch.begin();
         player.draw(game.batch);
         for (Enemy enemy : creator.getGroundEnemies()){
+            enemy.draw(game.batch);
+        }
+        for (Enemy enemy : creator.getBosses()){
             enemy.draw(game.batch);
         }
 //        for (Enemy enemy : creator.getFlyEnemies()){

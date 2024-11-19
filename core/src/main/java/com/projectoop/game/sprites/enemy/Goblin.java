@@ -19,10 +19,10 @@ public class Goblin extends GroundEnemy{
 
     @Override
     protected void prepareAnimation() {
-        atlasWalking = new TextureAtlas("Bringer-Of-Death/Pack/Walk.pack");
-        atlasAttacking = new TextureAtlas("Bringer-Of-Death/Pack/Attack.pack");
-        atlasDieing = new TextureAtlas("Bringer-Of-Death/Pack/Death.pack");
-        atlasHurting = new TextureAtlas("Bringer-Of-Death/Pack/Hurt.pack");
+        atlasWalking = new TextureAtlas("E_Goblin/Pack/Walk.pack");
+        atlasAttacking = new TextureAtlas("E_Goblin/Pack/Attack.pack");
+        atlasDieing = new TextureAtlas("E_Goblin/Pack/Death.pack");
+        atlasHurting = new TextureAtlas("E_Goblin/Pack/Hurt.pack");
 
         walkAnimation = new Animation<TextureRegion>(0.3f, atlasWalking.getRegions());
         attackAnimation = new Animation<TextureRegion>(0.2f, atlasAttacking.getRegions());
@@ -30,22 +30,5 @@ public class Goblin extends GroundEnemy{
         hurtAnimation = new Animation<TextureRegion>(0.3f, atlasHurting.getRegions());
     }
 
-    @Override
-    public void update(float dt) {
-        stateTime += dt;
-        if (setToDestroy && !destroyed){
-            world.destroyBody(b2body);
-            destroyed = true;
-            stateTime = 0;
-        }
-        else if (!destroyed){
-            TextureRegion frame = getFrame(dt);
-            b2body.setLinearVelocity(velocity);
-            setPosition(b2body.getPosition().x - getWidth()/2-50/GameWorld.PPM, b2body.getPosition().y - getHeight()/2);
-            //this y + addY to move the animation stand on the ground
-            setBounds(getX(), getY()+ addYtoAnim/ GameWorld.PPM, frame.getRegionWidth() / GameWorld.PPM * scaleX,
-                frame.getRegionHeight() / GameWorld.PPM * scaleY);
-            setRegion(frame);
-        }
-    }
+
 }

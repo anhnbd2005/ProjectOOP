@@ -16,6 +16,7 @@ import com.projectoop.game.sprites.trap.Trap;
 
 public class B2WorldCreator {
     private Array<GroundEnemy> groundEnemies;
+    private Array<Boss> bosses;
     private Array<FlyEnemy> flyEnemies;
     private Array<Chest> chests;
     private Array<Chest1> chest1s;
@@ -64,10 +65,10 @@ public class B2WorldCreator {
             groundEnemies.add(new Skeleton(screen, rect.getX() / GameWorld.PPM, rect.y / GameWorld.PPM));
         }
         //create all goblins
-        for (MapObject object : map.getLayers().get(13).getObjects().getByType(RectangleMapObject.class)){
-            Rectangle rect = ((RectangleMapObject)object).getRectangle();
-            groundEnemies.add(new Goblin(screen, rect.getX() / GameWorld.PPM, rect.y / GameWorld.PPM));
-        }
+//        for (MapObject object : map.getLayers().get(13).getObjects().getByType(RectangleMapObject.class)){
+//            Rectangle rect = ((RectangleMapObject)object).getRectangle();
+//            groundEnemies.add(new Goblin(screen, rect.getX() / GameWorld.PPM, rect.y / GameWorld.PPM));
+//        }
         for (MapObject object : map.getLayers().get(17).getObjects().getByType(RectangleMapObject.class)){
             Rectangle rect = ((RectangleMapObject)object).getRectangle();
             groundEnemies.add(new FlyEnemy(screen, rect.getX() / GameWorld.PPM, rect.y / GameWorld.PPM));
@@ -88,11 +89,20 @@ public class B2WorldCreator {
 //            Rectangle rect = ((RectangleMapObject)object).getRectangle();
 //            flyEnemies.add(new FlyingEye(screen, rect.getX() / GameWorld.PPM, rect.y / GameWorld.PPM));
 //        }
+        bosses = new Array<>();
+        for (MapObject object : map.getLayers().get(16).getObjects().getByType(RectangleMapObject.class)){
+            Rectangle rect = ((RectangleMapObject)object).getRectangle();
+            //  groundEnemies.add(new Orc(screen, rect.getX() / GameWorld.PPM, rect.y / GameWorld.PPM));
+            bosses.add(new Boss(screen, rect.getX() / GameWorld.PPM, rect.y / GameWorld.PPM,50,1.5f));
+        }
 
     }
 
     public Array<GroundEnemy> getGroundEnemies() {
         return groundEnemies;
+    }
+    public Array<Boss> getBosses() {
+        return bosses;
     }
     public Array<FlyEnemy> getFlyEnemies() {
         return flyEnemies;

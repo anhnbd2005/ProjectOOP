@@ -10,7 +10,7 @@ import com.projectoop.game.screens.PlayScreen;
 public class Goblin extends GroundEnemy{
     @Override
     public void draw(Batch batch) {
-       // super.draw(batch);
+        super.draw(batch);
     }
 
     public Goblin(PlayScreen screen, float x, float y) {

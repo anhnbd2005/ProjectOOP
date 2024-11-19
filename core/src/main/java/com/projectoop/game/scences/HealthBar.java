@@ -26,15 +26,15 @@ public class HealthBar {
     private ShapeRenderer shapeRenderer = new ShapeRenderer(); // test
 
 
-    public HealthBar(PlayScreen x) {
+    public HealthBar(PlayScreen screen) {
         HeroHealthBar = new Texture("HealthBar/bg.png");
         HeroHealth =  new Texture("HealthBar/red.png");
 
 
         //get batch and player
-        this.screen = x;
-        batch = x.game.getBatch();
-        player = x.getPlayer();
+        this.screen = screen;
+        batch = screen.game.getBatch();
+        player = screen.getPlayer();
 
 
 

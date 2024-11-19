@@ -143,12 +143,13 @@ public class WorldContactListener implements ContactListener {
                 if(fixA.getFilterData().categoryBits == GameWorld.ENEMY_BIT) {
                     Gdx.app.log("Enemy hit", "");
                     ((Enemy) fixA.getUserData()).attackingCallBack();
-                    ((Enemy)fixA.getUserData()).hitOnHead();
+                   // ((Enemy)fixA.getUserData()).hitOnHead();
                     //((Knight) fixB.getUserData()).hurtingCallBack();
                 }
                 else {
                     Gdx.app.log("Enemy hit", "");
                     ((Enemy) fixB.getUserData()).attackingCallBack();
+             //       ((Enemy)fixB.getUserData()).hitOnHead();
                     //((Knight) fixA.getUserData()).hurtingCallBack();
                 }
                 break;

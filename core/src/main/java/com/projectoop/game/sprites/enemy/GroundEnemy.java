@@ -7,13 +7,11 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.projectoop.game.GameWorld;
-import com.projectoop.game.scences.OrcHealthBar;
+import com.projectoop.game.scences.EnemyHealthBar;
 import com.projectoop.game.screens.PlayScreen;
-import com.projectoop.game.sprites.Knight;
 import com.projectoop.game.tools.AudioManager;
 
 public abstract class GroundEnemy extends Enemy{
@@ -39,7 +37,7 @@ public abstract class GroundEnemy extends Enemy{
     protected Sound dieSound;
 
     protected boolean playSoundAttack;
-    protected OrcHealthBar healthBar;
+    protected EnemyHealthBar healthBar;
     protected float maxHealth = 100; // Ví dụ về máu tối đa
     protected float currentHealth;
 
@@ -63,7 +61,7 @@ public abstract class GroundEnemy extends Enemy{
         isDie = false;
         playSoundAttack = false;
         currentHealth = maxHealth;
-        healthBar = new OrcHealthBar(this, maxHealth);
+        healthBar = new EnemyHealthBar(this, maxHealth);
     }
 
     protected abstract void prepareAnimation();
@@ -179,7 +177,7 @@ public abstract class GroundEnemy extends Enemy{
         if (isHurt){
             isHurt = false;
             isHurting = true;
-            this.velocity = new Vector2(0, 0);
+            this.velocity.x = 0;
             return State.HURTING;
         }
         if(isHurting) {//test
@@ -189,14 +187,14 @@ public abstract class GroundEnemy extends Enemy{
             }
             else {
                 isHurting = false;
-                this.velocity = runningRight ? new Vector2(1, 0) : new Vector2(-1, 0);
+                this.velocity.x = runningRight ? 1 : -1;
             }
         }
         //attack code
         if (isAttack){
             isAttacking = true;
             isAttack = false;
-            this.velocity = new Vector2(0, 0);
+            this.velocity.x = 0;
             return State.ATTACKING;
         }
         if (isAttacking){//test
@@ -206,7 +204,7 @@ public abstract class GroundEnemy extends Enemy{
             }
             else {
                 isAttacking = false;
-                this.velocity = runningRight ? new Vector2(1, 0) : new Vector2(-1, 0);
+                this.velocity.x = runningRight ? 1 : -1;
                 //playSound1 = false;
             }
         }
@@ -230,6 +228,7 @@ public abstract class GroundEnemy extends Enemy{
                 frame.getRegionHeight() / GameWorld.PPM * scaleY);
             setRegion(frame);
         }
+        System.out.println(velocity.x);
     }
 
     public void draw (Batch batch){
@@ -238,9 +237,13 @@ public abstract class GroundEnemy extends Enemy{
             healthBar.draw(batch);
         }
     }
-
+//    public void takeDamage(float damage) {
+//        currentHealth -= damage;
+//        healthBar.update(currentHealth);
+//        if(currentHealth<=0) destroy();
+//    }
     @Override
     public void hitOnHead() {
-
+   //    takeDamage(50);
     }
 }

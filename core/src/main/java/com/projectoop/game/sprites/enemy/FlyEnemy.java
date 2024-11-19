@@ -1,12 +1,14 @@
 package com.projectoop.game.sprites.enemy;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.projectoop.game.GameWorld;
 import com.projectoop.game.screens.PlayScreen;
 import com.projectoop.game.sprites.weapons.BulletManager;
@@ -30,8 +32,8 @@ public class FlyEnemy extends GroundEnemy{//test th, code sau
         bdef.gravityScale = 0;
         b2body = world.createBody(bdef);
         FixtureDef fdef = new FixtureDef();
-        CircleShape shape = new CircleShape();
-        shape.setRadius(10/GameWorld.PPM);
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(9/GameWorld.PPM, 9/GameWorld.PPM);
         //type bit
         fdef.filter.categoryBits = GameWorld.ENEMY_BIT;
         //Collision bit list
@@ -70,6 +72,10 @@ public class FlyEnemy extends GroundEnemy{//test th, code sau
         super.update(dt);
         bulletManager.update(dt);
     }
-
+    @Override
+    public void draw(Batch batch) {
+        super.draw(batch);
+        bulletManager.draw(batch);
+    }
     }
 

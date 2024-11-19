@@ -3,17 +3,17 @@ package com.projectoop.game.scences;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.projectoop.game.GameWorld;
+import com.projectoop.game.sprites.enemy.FlyEnemy;
 import com.projectoop.game.sprites.enemy.GroundEnemy;
-import com.projectoop.game.sprites.enemy.Orc;
 
-public class OrcHealthBar {
+public class EnemyHealthBar {
     private Texture bgTexture;
     private Texture redTexture;
     private float maxHealth;
     private float currentHealth;
     private GroundEnemy groundEnemy;
 
-    public OrcHealthBar(GroundEnemy groundEnemy, float maxHealth) {
+    public EnemyHealthBar(GroundEnemy groundEnemy, float maxHealth) {
         this.groundEnemy = groundEnemy;
         this.maxHealth = maxHealth;
         this.currentHealth = maxHealth;
@@ -36,7 +36,10 @@ public class OrcHealthBar {
 //        float barY = groundEnemy.getY() + groundEnemy.getHeight() / 2 + barHeight+ 20/ GameWorld.PPM;
        float barX = groundEnemy.getX() + groundEnemy.getWidth() / 2 / GameWorld.PPM + barWidth +5/ GameWorld.PPM;
         float barY = groundEnemy.getY() + groundEnemy.getHeight() / GameWorld.PPM + barHeight + 110 / GameWorld.PPM;
-
+        if (groundEnemy instanceof FlyEnemy)
+            barY += 13/GameWorld.PPM;
+        else
+            barY += 25/GameWorld.PPM;
 
 
 

@@ -1,20 +1,9 @@
 package com.projectoop.game.sprites.enemy;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.CircleShape;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.projectoop.game.GameWorld;
-import com.projectoop.game.scences.OrcHealthBar;
 import com.projectoop.game.screens.PlayScreen;
-import com.projectoop.game.sprites.Knight;
-import com.projectoop.game.tools.AudioManager;
 
 public class Orc extends GroundEnemy{
 

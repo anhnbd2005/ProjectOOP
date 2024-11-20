@@ -33,4 +33,9 @@ public class Orc extends GroundEnemy{
         takeDamage(50);
 
     }
+
+    @Override
+    public void dispose() {
+
+    }
 }

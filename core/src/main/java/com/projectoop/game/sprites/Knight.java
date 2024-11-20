@@ -168,7 +168,7 @@ public class Knight extends Sprite {
         shape.setRadius(6/GameWorld.PPM);
         fdef.filter.categoryBits = GameWorld.KNIGHT_BIT;
         fdef.filter.maskBits =
-            GameWorld.GROUND_BIT | GameWorld.FIREBALL_BIT |
+            GameWorld.GROUND_BIT | GameWorld.FIREBALL_BIT |GameWorld.BOSSBALL_BIT |
             GameWorld.TRAP_BIT | GameWorld.CHEST_BIT | GameWorld.CHEST1_BIT|
             GameWorld.ENEMY_BIT | GameWorld.ITEM_BIT;
 

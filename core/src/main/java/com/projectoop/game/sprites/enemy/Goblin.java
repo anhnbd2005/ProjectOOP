@@ -13,6 +13,11 @@ public class Goblin extends GroundEnemy{
         super.draw(batch);
     }
 
+    @Override
+    public void dispose() {
+
+    }
+
     public Goblin(PlayScreen screen, float x, float y) {
         super(screen, x, y, 50, 1.2f);
     }

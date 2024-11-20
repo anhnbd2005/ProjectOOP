@@ -5,12 +5,15 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.utils.Array;
 import com.projectoop.game.GameWorld;
 import com.projectoop.game.scences.BossHealthBar;
+import com.projectoop.game.sprites.enemy.*;
 import com.projectoop.game.scences.EnemyHealthBar;
 import com.projectoop.game.screens.PlayScreen;
 import com.projectoop.game.sprites.weapons.BulletManager;
@@ -50,6 +53,7 @@ public class Boss extends Enemy{
     private float timeCount;
     private float lastTimeShoot;
     private BulletManager bulletManager;
+    private BossManager bossManager;
 
     public Boss(PlayScreen screen, float x, float y, float addY, float scale) {
         super(screen, x, y);
@@ -59,6 +63,7 @@ public class Boss extends Enemy{
         lastTimeShoot = 0;
         timeCount = 2;
         bulletManager = new BulletManager(screen);
+        bossManager = new BossManager(screen);
 
         currentState = State.WALKING;
         previousState = State.WALKING;
@@ -73,6 +78,8 @@ public class Boss extends Enemy{
         playSoundAttack = false;
         currentHealth = maxHealth;
         healthBar = new BossHealthBar(this, maxHealth);
+
+
     }
 
     protected void prepareAnimation(){
@@ -154,7 +161,20 @@ public class Boss extends Enemy{
         if(timeCount > COOL_DOWN) {
             System.out.println("dcmmm");
             int direction = (runningRight) ? 1 : -1;
-            bulletManager.addBullet(b2body.getPosition().x, b2body.getPosition().y+50/GameWorld.PPM, direction, "BossBall");
+
+            bulletManager.addBullet(b2body.getPosition().x, b2body.getPosition().y+15/GameWorld.PPM, direction, "BossBall");
+            int rnd1 = MathUtils.random(3);
+            switch (rnd1) {
+                case 0:
+                    bossManager.addEnemy(b2body.getPosition().x, b2body.getPosition().y, "Skeleton");
+                    break;
+                case 1:
+                    bossManager.addEnemy(b2body.getPosition().x, b2body.getPosition().y, "Orc");
+                    break;
+                default:
+                    bossManager.addEnemy(b2body.getPosition().x, b2body.getPosition().y, "Goblin");
+                    break;
+            }
             timeCount = 0;
         }
         currentState = getState();
@@ -194,6 +214,7 @@ public class Boss extends Enemy{
     }
 
     public State getState(){
+
         //die and hurt code
         if (isDie){//test
             if (dieAnimation.isAnimationFinished(stateTime)) {
@@ -259,6 +280,7 @@ public class Boss extends Enemy{
         }
         System.out.println(velocity.x);
         bulletManager.update(dt);
+        bossManager.update(dt);
     }
 
 
@@ -268,6 +290,8 @@ public class Boss extends Enemy{
             healthBar.draw(batch);
         }
         bulletManager.draw(batch);
+        bossManager.draw(batch);
+
     }
     //    public void takeDamage(float damage) {
 //        currentHealth -= damage;

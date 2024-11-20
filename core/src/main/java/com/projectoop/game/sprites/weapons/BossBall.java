@@ -3,6 +3,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -16,11 +17,20 @@ public class BossBall extends Bullet{
     private Animation<TextureRegion> shootingAnim;
     public BossBall(PlayScreen screen, float x, float y, int direction) {
         super(screen, x, y, direction);
-        this.velocity = new Vector2(3*direction , -1);
+        this.velocity = new Vector2(2*direction , 0);
     }
     @Override
     protected void prepareAnimation() {
-        atlasShooting = new TextureAtlas("E_FlyingEye/Pack/FireBall.pack");
+        int rnd1 = MathUtils.random(2);
+        switch (rnd1) {
+            case 0:
+                atlasShooting = new TextureAtlas("E_FlyingEye/Pack/FireBall.pack");
+                break;
+            default:
+                atlasShooting = new TextureAtlas("Ghost/Pack/Shoot.pack");
+                break;
+        }
+       // atlasShooting = new TextureAtlas("E_FlyingEye/Pack/FireBall.pack");
         shootingAnim = new Animation<TextureRegion>(0.1f, atlasShooting.getRegions());
     }
     @Override

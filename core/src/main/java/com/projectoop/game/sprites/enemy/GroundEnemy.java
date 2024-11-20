@@ -246,4 +246,5 @@ public abstract class GroundEnemy extends Enemy{
     public void hitOnHead() {
    //    takeDamage(50);
     }
+    public abstract void dispose();
 }

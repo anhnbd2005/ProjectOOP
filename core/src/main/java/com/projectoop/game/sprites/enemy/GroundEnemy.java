@@ -237,14 +237,17 @@ public abstract class GroundEnemy extends Enemy{
             healthBar.draw(batch);
         }
     }
-//    public void takeDamage(float damage) {
-//        currentHealth -= damage;
-//        healthBar.update(currentHealth);
-//        if(currentHealth<=0) destroy();
-//    }
+    public void takeDamage(float damage) {
+        currentHealth -= damage;
+        healthBar.update(currentHealth);
+        if(currentHealth<=0) destroy();
+    }
     @Override
     public void hitOnHead() {
-   //    takeDamage(50);
+       takeDamage(50);
     }
     public abstract void dispose();
+    public void setVelocity(Vector2 velocity) {
+        this.velocity = velocity;
+    }
 }

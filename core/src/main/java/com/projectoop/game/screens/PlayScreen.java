@@ -20,6 +20,7 @@ import com.projectoop.game.GameWorld;
 import com.projectoop.game.scences.HealthBar;
 import com.projectoop.game.scences.Hud;
 import com.projectoop.game.sprites.effectedObject.EffectedObject;
+import com.projectoop.game.sprites.enemy.BossManager;
 import com.projectoop.game.sprites.enemy.Enemy;
 import com.projectoop.game.sprites.Knight;
 import com.projectoop.game.sprites.enemy.Orc;
@@ -154,13 +155,12 @@ public class PlayScreen implements Screen {
                 enemy.b2body.setActive(true);//optimize to avoid lagging
             }
         }
-        for (Enemy enemy : creator.getBosses()){
+        for (Enemy enemy : creator.getBosses()) {
             enemy.update(dt);
-            if (enemy.getX() < player.getX() + (GameWorld.V_WIDTH/2 + 4 * 16)/GameWorld.PPM){
+            if (enemy.getX() < player.getX() + (GameWorld.V_WIDTH / 2 + 4 * 16) / GameWorld.PPM) {
                 enemy.b2body.setActive(true);//optimize to avoid lagging
             }
         }
-
 
         for (EffectedObject eobj : creator.getChests()){
             eobj.update(dt);

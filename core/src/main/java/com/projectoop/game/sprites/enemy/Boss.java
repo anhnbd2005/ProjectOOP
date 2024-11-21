@@ -13,11 +13,14 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.Array;
 import com.projectoop.game.GameWorld;
 import com.projectoop.game.scences.BossHealthBar;
+import com.projectoop.game.sprites.effectedObject.Chest;
+import com.projectoop.game.sprites.effectedObject.Chest1;
 import com.projectoop.game.sprites.enemy.*;
 import com.projectoop.game.scences.EnemyHealthBar;
 import com.projectoop.game.screens.PlayScreen;
 import com.projectoop.game.sprites.weapons.BulletManager;
 import com.projectoop.game.tools.AudioManager;
+import com.projectoop.game.tools.B2WorldCreator;
 
 public class Boss extends Enemy{
     public enum State {HURTING, ATTACKING, DEAD, WALKING};
@@ -52,8 +55,11 @@ public class Boss extends Enemy{
     private final float COOL_DOWN = 2;
     private float timeCount;
     private float lastTimeShoot;
-    private BulletManager bulletManager;
-    private BossManager bossManager;
+   private BulletManager bulletManager;
+ //  private Array<GroundEnemy> monsters;
+
+   // private BossManager1 bossManager;
+   private BossManager bossManager;
 
     public Boss(PlayScreen screen, float x, float y, float addY, float scale) {
         super(screen, x, y);
@@ -175,6 +181,9 @@ public class Boss extends Enemy{
                     bossManager.addEnemy(b2body.getPosition().x, b2body.getPosition().y, "Goblin");
                     break;
             }
+
+//             = new Array<>();monsters
+//           monsters.add(new Skeleton(screen, b2body.getPosition().x, b2body.getPosition().y));
             timeCount = 0;
         }
         currentState = getState();
@@ -302,4 +311,5 @@ public class Boss extends Enemy{
     public void hitOnHead() {
         //    takeDamage(50);
     }
+
 }

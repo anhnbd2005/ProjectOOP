@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.projectoop.game.GameWorld;
 import com.projectoop.game.screens.PlayScreen;
 
@@ -20,6 +21,7 @@ public class Goblin extends GroundEnemy{
 
     public Goblin(PlayScreen screen, float x, float y) {
         super(screen, x, y, 50, 1.2f);
+
     }
 
     @Override

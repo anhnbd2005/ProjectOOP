@@ -15,7 +15,7 @@ import com.projectoop.game.sprites.trap.Pilar;
 import com.projectoop.game.sprites.trap.Trap;
 
 public class B2WorldCreator {
-    private Array<GroundEnemy> groundEnemies;
+    public Array<GroundEnemy> groundEnemies;
     private Array<Boss> bosses;
     private Array<FlyEnemy> flyEnemies;
     private Array<Chest> chests;

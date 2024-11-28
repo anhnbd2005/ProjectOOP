@@ -44,6 +44,8 @@ public abstract class GroundEnemy extends Enemy{
     protected boolean lastDirectionIsRight;
     protected float addYtoAnim;
 
+    public static float attackRange;
+
     public GroundEnemy(PlayScreen screen, float x, float y, float addY, float scale) {
         super(screen, x, y);
         this.addYtoAnim = addY;
@@ -62,6 +64,8 @@ public abstract class GroundEnemy extends Enemy{
         playSoundAttack = false;
         currentHealth = maxHealth;
         healthBar = new EnemyHealthBar(this, maxHealth);
+
+        attackRange = 30;
     }
 
     protected abstract void prepareAnimation();
@@ -88,25 +92,41 @@ public abstract class GroundEnemy extends Enemy{
         //Collision bit list
         fdef.filter.maskBits = GameWorld.GROUND_BIT |
             GameWorld.TRAP_BIT | GameWorld.CHEST_BIT |GameWorld.CHEST1_BIT |
-            GameWorld.PILAR_BIT | GameWorld.KNIGHT_BIT | GameWorld.ARROW_BIT;
+            GameWorld.PILAR_BIT |  GameWorld.ARROW_BIT|
+            GameWorld.KNIGHT_SWORD_LEFT | GameWorld.KNIGHT_SWORD_RIGHT;
+
         fdef.shape = shape;
         b2body.createFixture(fdef).setUserData(this);
     }
 
     public void hurtKnockBack() {
-        double crTime = System.currentTimeMillis();
 
-
-        double t = 200;
-        if(System.currentTimeMillis()-crTime <t) {
             if(screen.getPlayer().b2body.getPosition().x < b2body.getPosition().x)
                 b2body.applyLinearImpulse(new Vector2(20,5), b2body.getWorldCenter(),true);
             else
                 b2body.applyLinearImpulse(new Vector2(-20,5), b2body.getWorldCenter(),true);
-        }
-
     }
 
+    public boolean isAttack(){
+        return currentState == State.ATTACKING;
+    }
+    //KNIGHT_BIT | ENEMY_BIT
+    public boolean isInRangeAttack() {
+        if (!screen.getPlayer().isAttack()) return false;
+        //player on the left-side of enemy
+        float check_dis = this.b2body.getPosition().x - screen.getPlayer().b2body.getPosition().x;
+        if (check_dis < attackRange/GameWorld.PPM && check_dis > 0){
+            //System.out.println("1");
+            return true;
+        }
+        //right-side
+        else if (-check_dis < attackRange/GameWorld.PPM && -check_dis > 0){
+            //System.out.println("2");
+            return true;
+        }
+        //System.out.println("non");
+        return false;
+    }
     @Override
     public void destroy() {
         setToDestroy = true;
@@ -116,16 +136,17 @@ public abstract class GroundEnemy extends Enemy{
     public void attackingCallBack() {
         attackSound.play();
         isAttack = true;
-        System.out.println("Chem chem chem");
-        screen.getPlayer().hurtingCallBack();
+        //  System.out.println("Chem chem chem");
+        // screen.getPlayer().hurtingCallBack();
     }
 
     @Override
     public void hurtingCallBack() {
-        hurtSound.play();
-        hurtKnockBack();
-        isHurt = true;
+            hurtKnockBack();
+            hurtSound.play();
+            isHurt = true;
     }
+
 
     public TextureRegion getFrame(float dt){
         currentState = getState();
@@ -174,7 +195,8 @@ public abstract class GroundEnemy extends Enemy{
             return State.DEAD;
         }
 
-        if (isHurt){
+        if (isHurt || isInRangeAttack()){
+            hurtKnockBack();
             isHurt = false;
             isHurting = true;
             this.velocity.x = 0;
@@ -182,7 +204,7 @@ public abstract class GroundEnemy extends Enemy{
         }
         if(isHurting) {//test
             if(!hurtAnimation.isAnimationFinished(stateTime)) {
-                System.out.println("hihihihihihihh");
+               // System.out.println("hihihihihihihh");
                 return State.HURTING;
             }
             else {
@@ -199,7 +221,7 @@ public abstract class GroundEnemy extends Enemy{
         }
         if (isAttacking){//test
             if (!attackAnimation.isAnimationFinished(stateTime)){
-                System.out.println("attacking");
+               // System.out.println("attacking");
                 return State.ATTACKING;
             }
             else {

@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.projectoop.game.GameWorld;
 import com.projectoop.game.screens.PlayScreen;
+import com.projectoop.game.sprites.enemy.GroundEnemy;
+import com.projectoop.game.sprites.weapons.Arrow;
 import com.projectoop.game.sprites.weapons.BulletManager;
 import com.projectoop.game.tools.AudioManager;
 
@@ -18,8 +20,10 @@ public class Knight extends Sprite {
     public Body b2body;
     private BulletManager bulletManager;
 
-    private static float scaleX = 1.5f;
-    private static float scaleY = 1.5f;
+    public static float scaleX = 1.5f;
+    public static float scaleY = 1.5f;
+
+    private Vector2 startPosition;
 
     //test
     private static int deathCount = 3;
@@ -59,6 +63,8 @@ public class Knight extends Sprite {
     private float lastTimeShoot;
     private float timeCount;
     private final float COOL_DOWN = 2;
+    private float timeCountBig;
+    private final float BIG_TIMER = 5;
 
     private boolean isRunningRight;
     private boolean isHurt;
@@ -68,8 +74,8 @@ public class Knight extends Sprite {
     private boolean isAttacking3;
     private boolean isAttack3;
     private boolean isDie;
-    private boolean isJumping;
     private boolean endGame;
+    private boolean isBig;
     private boolean shoot;
 
     private boolean playSound1;
@@ -84,9 +90,12 @@ public class Knight extends Sprite {
         currentState = State.STANDING;
         previousState = State.STANDING;
 
+        startPosition = new Vector2(32/GameWorld.PPM, 250/GameWorld.PPM);
+
         stateTimer = 0;
         lastTimeShoot = 0;
         timeCount = 2;
+        timeCountBig = 0;
         isRunningRight = true;
 
         prepareAnimation();
@@ -100,8 +109,8 @@ public class Knight extends Sprite {
         isDie = false;
         isHurt = false;
         isHurting = false;
-        isJumping = false;
         endGame = false;
+        isBig = false;
         shoot = false;
     }
 
@@ -142,7 +151,7 @@ public class Knight extends Sprite {
         knightAttack1 = new Animation<TextureRegion>(0.05f, atlasAttacking1.getRegions());
         //knightAttack2 = new Animation<TextureRegion>(0.05f, atlasAttacking2.getRegions());
         //knightAttack3 = new Animation<TextureRegion>(0.05f, atlasAttacking3.getRegions());
-        knightHurt = new Animation<TextureRegion>(0.01f, atlasBeingHurt.getRegions());
+        knightHurt = new Animation<TextureRegion>(0.05f, atlasBeingHurt.getRegions());
     }
 
     private void prepareSound(){
@@ -159,7 +168,7 @@ public class Knight extends Sprite {
 
     public void defineKnight(){
         BodyDef bdef = new BodyDef();
-        bdef.position.set(32/GameWorld.PPM, 100/GameWorld.PPM);
+        bdef.position.set(startPosition);
         bdef.type = BodyDef.BodyType.DynamicBody;
 
         b2body = world.createBody(bdef);
@@ -190,11 +199,99 @@ public class Knight extends Sprite {
                 new Vector2(2/GameWorld.PPM, -6/GameWorld.PPM));
         fdef.filter.categoryBits = GameWorld.KNIGHT_FOOT_BIT;
         fdef.shape = foot;
-        //fdef.isSensor = true;//foot is a sensor
+        //fdef.isSensor = true;//foot is a sensor, sensor is an object but is not able to make physical collision
+        b2body.createFixture(fdef).setUserData(this);
+//        //knight center sensor
+//        EdgeShape center = new EdgeShape();
+//        center.set(new Vector2(5/GameWorld.PPM, -5/GameWorld.PPM),
+//            new Vector2(5/GameWorld.PPM, -5/GameWorld.PPM));
+//        fdef.filter.categoryBits = GameWorld.KNIGHT_CENTER;
+//        fdef.shape = center;
+//        fdef.isSensor = true;
+//        b2body.createFixture(fdef).setUserData(this);
+        //sword hit right sensor
+        EdgeShape swordRight = new EdgeShape();
+        swordRight.set(new Vector2(20/GameWorld.PPM, -6/GameWorld.PPM),
+            new Vector2(20/GameWorld.PPM, 6/GameWorld.PPM));
+        fdef.filter.categoryBits = GameWorld.KNIGHT_SWORD_RIGHT;
+        fdef.shape = swordRight;
+        fdef.isSensor = true;
+        b2body.createFixture(fdef).setUserData(this);
+        //sword hit left sensor
+        EdgeShape swordLeft = new EdgeShape();
+        swordLeft.set(new Vector2(-20/GameWorld.PPM, -6/GameWorld.PPM),
+            new Vector2(-20/GameWorld.PPM, 6/GameWorld.PPM));
+        fdef.filter.categoryBits = GameWorld.KNIGHT_SWORD_LEFT;
+        fdef.shape = swordLeft;
+        fdef.isSensor = true;
 
         b2body.createFixture(fdef).setUserData(this);
     }
 
+    public void redefineKnight(){
+        Vector2 position = b2body.getPosition();
+        world.destroyBody(b2body);
+        BodyDef bdef = new BodyDef();
+        bdef.position.set(position);
+        bdef.type = BodyDef.BodyType.DynamicBody;
+        b2body = world.createBody(bdef);
+        FixtureDef fdef = new FixtureDef();
+        CircleShape shape = new CircleShape();
+        shape.setRadius(20/GameWorld.PPM);
+        fdef.filter.categoryBits = GameWorld.KNIGHT_BIT;
+        fdef.filter.maskBits =
+            GameWorld.GROUND_BIT | GameWorld.FIREBALL_BIT |
+                GameWorld.TRAP_BIT | GameWorld.CHEST_BIT |
+                GameWorld.ENEMY_BIT | GameWorld.ITEM_BIT;
+        fdef.shape = shape;
+        b2body.createFixture(fdef);
+        //make EdgeShape for checking foot-collision
+        EdgeShape foot = new EdgeShape();
+        foot.set(new Vector2(-20/GameWorld.PPM, -20/GameWorld.PPM),
+            new Vector2(20/GameWorld.PPM, -20/GameWorld.PPM));
+        fdef.filter.categoryBits = GameWorld.KNIGHT_FOOT_BIT;
+        fdef.shape = foot;
+        //fdef.isSensor = true;//foot is a sensor, sensor is an object but is not able to make physical collision
+        b2body.createFixture(fdef).setUserData(this);
+        //sword hit right sensor
+        EdgeShape swordRight = new EdgeShape();
+        swordRight.set(new Vector2(50/GameWorld.PPM, -20/GameWorld.PPM),
+            new Vector2(50/GameWorld.PPM, 20/GameWorld.PPM));
+        fdef.filter.categoryBits = GameWorld.KNIGHT_SWORD_RIGHT;
+        fdef.shape = swordRight;
+        fdef.isSensor = true;
+        b2body.createFixture(fdef).setUserData(this);
+        //sword hit left sensor
+        EdgeShape swordLeft = new EdgeShape();
+        swordLeft.set(new Vector2(-50/GameWorld.PPM, -20/GameWorld.PPM),
+            new Vector2(-50/GameWorld.PPM, 20/GameWorld.PPM));
+        fdef.filter.categoryBits = GameWorld.KNIGHT_SWORD_LEFT;
+        fdef.shape = swordLeft;
+        fdef.isSensor = true;
+        b2body.createFixture(fdef).setUserData(this);
+    }
+
+    public void bigMode(){
+        isBig = true;
+        b2body.setTransform(b2body.getPosition().x, b2body.getPosition().y + 40/GameWorld.PPM,0);
+        Knight.scaleX = Knight.scaleY = 3;
+        Arrow.scaleX = Arrow.scaleY = 3;
+        redefineKnight();
+        GroundEnemy.attackRange = 70;
+    }
+    public void endBigMode(){
+        isBig = false;
+        Knight.scaleX = Knight.scaleY = 1.5f;
+        Arrow.scaleX = Arrow.scaleY = 1.2f;
+        startPosition = b2body.getPosition();
+        world.destroyBody(b2body);
+        defineKnight();
+        GroundEnemy.attackRange = 30;
+    }
+
+    public boolean isAttack(){
+        return (currentState == State.ATTACKING1 || currentState == State.ATTACKING2);
+    }
 
     public void hurtingCallBack(){
         isHurt = true;
@@ -220,8 +317,11 @@ public class Knight extends Sprite {
     }
 
 
-    public boolean isJumping(){
-        return isJumping;
+    public boolean isHitRight(){
+        return (currentState == State.ATTACKING1 || currentState == State.ATTACKING2) && isRunningRight;
+    }
+    public boolean isHitLeft(){
+        return (currentState == State.ATTACKING1 || currentState == State.ATTACKING2) && !isRunningRight;
     }
 
     public void attack1CallBack(){
@@ -303,7 +403,7 @@ public class Knight extends Sprite {
             }
             if (deathCount <= 0) endGame = true;
             else {
-                b2body.setTransform(32 / GameWorld.PPM, 100 / GameWorld.PPM, 0);
+                b2body.setTransform(32 / GameWorld.PPM, 250 / GameWorld.PPM, 0);
                 isDie = false;
             }
         }
@@ -359,12 +459,10 @@ public class Knight extends Sprite {
             }
         }
         //movement code
-        isJumping = false;
         if (b2body.getLinearVelocity().y == 0 && previousState == State.JUMPING){
             b2body.setLinearVelocity(0, 0);//avoid sliding after jumping down
         }
         if (b2body.getLinearVelocity().y !=0){
-            isJumping = true;
             return State.JUMPING;
         }
         else if (b2body.getLinearVelocity().x != 0){
@@ -375,6 +473,11 @@ public class Knight extends Sprite {
 
 
     public void update(float dt){
+        if (isBig) timeCountBig += dt;
+        if (timeCountBig > BIG_TIMER){
+            endBigMode();
+            timeCountBig = 0;
+        }
         setPosition(b2body.getPosition().x - getWidth()/2, b2body.getPosition().y - getHeight()/2);
         TextureRegion frame = getFrame(dt);
 

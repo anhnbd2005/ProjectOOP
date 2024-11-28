@@ -23,11 +23,13 @@ import com.projectoop.game.sprites.effectedObject.EffectedObject;
 import com.projectoop.game.sprites.enemy.BossManager;
 import com.projectoop.game.sprites.enemy.Enemy;
 import com.projectoop.game.sprites.Knight;
+import com.projectoop.game.sprites.enemy.GroundEnemy;
 import com.projectoop.game.sprites.enemy.Orc;
 import com.projectoop.game.sprites.items.Item;
 import com.projectoop.game.sprites.items.ItemDef;
 import com.projectoop.game.sprites.items.Potion;
 import com.projectoop.game.sprites.items.Book;
+import com.projectoop.game.sprites.weapons.Arrow;
 import com.projectoop.game.sprites.weapons.BulletManager;
 import com.projectoop.game.tools.AudioManager;
 import com.projectoop.game.tools.B2WorldCreator;
@@ -75,7 +77,7 @@ public class PlayScreen implements Screen {
         mapLoader = new TmxMapLoader();
         map = mapLoader.load("Map4.tmx");
         renderer = new OrthogonalTiledMapRenderer(map, 1/GameWorld.PPM);
-        gameCam.position.set( gamePort.getWorldWidth() /2, gamePort.getWorldHeight() /2, 0);
+        gameCam.position.set( gamePort.getWorldWidth() /2, gamePort.getWorldHeight() /2+50/GameWorld.PPM, 0);
 
         world = new World(new Vector2(0, -10), true);//vector gravity
         b2dr = new Box2DDebugRenderer();
@@ -115,9 +117,9 @@ public class PlayScreen implements Screen {
 
     //Input manager
     public void handleInput(float dt){
-        if (player.getState() != Knight.State.DEAD) {
+        if (player.getState() != Knight.State.DEAD && player.getState() != Knight.State.HURTING) {
             //test
-            if (Gdx.input.isKeyJustPressed(Input.Keys.W) && !player.isJumping()) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.W) && player.b2body.getLinearVelocity().y == 0) {
                 player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
             }
             if (player.getState() != Knight.State.ATTACKING3) {
@@ -126,6 +128,9 @@ public class PlayScreen implements Screen {
                 }
                 if (Gdx.input.isKeyPressed(Input.Keys.A) && player.b2body.getLinearVelocity().x >= -2) {
                     player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+                }
+                if (Gdx.input.isKeyJustPressed(Input.Keys.O)){
+                    player.bigMode();
                 }
             }
             //attacking code
@@ -231,6 +236,7 @@ public class PlayScreen implements Screen {
         for (Item item : items){
             item.draw(game.batch);
         }
+        //
 
         game.batch.end();
 

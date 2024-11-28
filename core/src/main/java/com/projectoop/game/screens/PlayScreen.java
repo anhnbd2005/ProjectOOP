@@ -53,7 +53,7 @@ public class PlayScreen implements Screen {
 
     private World world;
     private Box2DDebugRenderer b2dr;
-    private B2WorldCreator creator;
+    public B2WorldCreator creator;
 
     private Knight player;
 
@@ -186,7 +186,7 @@ public class PlayScreen implements Screen {
         items.removeAll(itemsToRemove, true);
 
         hud.update(dt);
-        healthbar.update(dt);
+      //  healthbar.update(dt);
 
         //attack gamecam to x coordinate of player
         gameCam.position.x = player.b2body.getPosition().x;
@@ -237,11 +237,11 @@ public class PlayScreen implements Screen {
             item.draw(game.batch);
         }
         //
-
+        healthbar.update(delta);
         game.batch.end();
 
         //draw head of display
-         healthbar.update(delta);
+        // healthbar.update(delta);
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);//select camera position
         hud.stage.draw();
 

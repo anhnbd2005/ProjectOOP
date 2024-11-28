@@ -5,8 +5,10 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.projectoop.game.GameWorld;
 import com.projectoop.game.screens.PlayScreen;
+import com.projectoop.game.sprites.enemy.Enemy;
 import com.projectoop.game.sprites.enemy.GroundEnemy;
 import com.projectoop.game.sprites.weapons.Arrow;
 import com.projectoop.game.sprites.weapons.BulletManager;
@@ -16,14 +18,17 @@ public class Knight extends Sprite {
     public enum State {HURTING, ATTACKING1, ATTACKING2, ATTACKING3, DEAD, JUMPING, STANDING, RUNNING};
     public State currentState;
     public State previousState;
+    private PlayScreen screen;
     private World world;
     public Body b2body;
     private BulletManager bulletManager;
+    public Array<Enemy> monsterInRange;
 
     public static float scaleX = 1.5f;
     public static float scaleY = 1.5f;
 
     private Vector2 startPosition;
+    private int damage;
 
     //test
     private static int deathCount = 3;
@@ -61,8 +66,10 @@ public class Knight extends Sprite {
 
     private float stateTimer;
     private float lastTimeShoot;
-    private float timeCount;
-    private final float COOL_DOWN = 2;
+    private float timeCountShoot;
+    private float timeCountAttack;
+    private final float SHOOTING_COOL_DOWN = 1;
+    private final float ATTACKING_COOL_DOWN = 0.5f;
     private float timeCountBig;
     private final float BIG_TIMER = 5;
 
@@ -85,16 +92,19 @@ public class Knight extends Sprite {
         Health = 100;        // Giá trị khởi tạo cho sức khỏe hiện tại
         HealthMax = 100;
 
+        this.screen = screen;
         this.world = screen.getWorld();
         bulletManager = new BulletManager(screen);
         currentState = State.STANDING;
         previousState = State.STANDING;
+        monsterInRange = new Array<>();
 
         startPosition = new Vector2(32/GameWorld.PPM, 250/GameWorld.PPM);
 
         stateTimer = 0;
         lastTimeShoot = 0;
-        timeCount = 2;
+        timeCountShoot = 2;
+        timeCountAttack = 1;
         timeCountBig = 0;
         isRunningRight = true;
 
@@ -111,7 +121,6 @@ public class Knight extends Sprite {
         isHurting = false;
         endGame = false;
         isBig = false;
-        shoot = false;
     }
 
     private void prepareAnimation(){
@@ -167,6 +176,8 @@ public class Knight extends Sprite {
     }
 
     public void defineKnight(){
+        damage = 20;
+
         BodyDef bdef = new BodyDef();
         bdef.position.set(startPosition);
         bdef.type = BodyDef.BodyType.DynamicBody;
@@ -229,6 +240,8 @@ public class Knight extends Sprite {
     }
 
     public void redefineKnight(){
+        damage = 50;
+
         Vector2 position = b2body.getPosition();
         world.destroyBody(b2body);
         BodyDef bdef = new BodyDef();
@@ -306,6 +319,10 @@ public class Knight extends Sprite {
         return stateTimer;
     }
 
+    public int getDamage(){
+        return damage;
+    }
+
     public void setDie(){
         deathCount--;
         isDie = true;
@@ -317,29 +334,37 @@ public class Knight extends Sprite {
     }
 
 
-    public boolean isHitRight(){
-        return (currentState == State.ATTACKING1 || currentState == State.ATTACKING2) && isRunningRight;
-    }
-    public boolean isHitLeft(){
-        return (currentState == State.ATTACKING1 || currentState == State.ATTACKING2) && !isRunningRight;
-    }
 
     public void attack1CallBack(){
-        isAttacking1 = true;
+        if (timeCountAttack > ATTACKING_COOL_DOWN){
+            isAttacking1 = true;
+            timeCountAttack = 0;
+            for (Enemy enemy : screen.creator.getGroundEnemies())
+                if (enemy.inRangeAttack && enemy.isUsable()) {
+                    enemy.hurtingCallBack();
+                }
+        }
     }
     public void attack2CallBack(){
-        isAttacking2 = true;
+        if (timeCountAttack > ATTACKING_COOL_DOWN){
+            isAttacking2 = true;
+            timeCountAttack = 0;
+            for (Enemy enemy : screen.creator.getGroundEnemies())
+                if (enemy.inRangeAttack && enemy.isUsable()) {
+                    enemy.hurtingCallBack();
+                }
+        }
     }
     public void attack3CallBack(){
-        if (timeCount > COOL_DOWN) {
+        if (timeCountShoot > SHOOTING_COOL_DOWN) {
             isAttack3 = true;
-            shoot = false;
-            timeCount = 0;
+            timeCountShoot = 0;
         }
     }
 
     public TextureRegion getFrame(float dt){
-        timeCount += dt;
+        timeCountShoot += dt;
+        timeCountAttack += dt;
 
         currentState = getState();
         TextureRegion region;

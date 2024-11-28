@@ -176,15 +176,20 @@ public class WorldContactListener implements ContactListener {
                 // Sword sensor collisions
             case GameWorld.KNIGHT_SWORD_RIGHT | GameWorld.ENEMY_BIT:
                 Enemy enemyRight = (Enemy) ((fixA.getFilterData().categoryBits == GameWorld.ENEMY_BIT) ? fixA.getUserData() : fixB.getUserData());
-                enemyRight.attackingCallBack();
+//                enemyRight.attackingCallBack();
                 if (enemyRight.velocity.x < 0){
+                    enemyRight.attackingCallBack();
                     screen.getPlayer().hurtingCallBack();
                 }
+                //screen.getPlayer().monsterInRange.add(enemyRight);
+                //enemyRight.hurtingCallBack();
+                enemyRight.inRangeAttack = true;
                 break;
             case GameWorld.KNIGHT_SWORD_LEFT | GameWorld.ENEMY_BIT:
                 Enemy enemyLeft = (Enemy) ((fixA.getFilterData().categoryBits == GameWorld.ENEMY_BIT) ? fixA.getUserData() : fixB.getUserData());
-                enemyLeft.attackingCallBack();
+//                enemyLeft.attackingCallBack();
                 if (enemyLeft.velocity.x > 0){
+                    enemyLeft.attackingCallBack();
                     screen.getPlayer().hurtingCallBack();
                 }
                 break;
@@ -193,6 +198,22 @@ public class WorldContactListener implements ContactListener {
 
     @Override
     public void endContact(Contact contact) {
+        Gdx.app.log("End Contact", "");
+        Fixture fixA = contact.getFixtureA();
+        Fixture fixB = contact.getFixtureB();
+        //collision definition
+        int cDef = fixA.getFilterData().categoryBits | fixB.getFilterData().categoryBits;
+        switch (cDef){
+            case GameWorld.KNIGHT_SWORD_RIGHT | GameWorld.ENEMY_BIT:
+                Enemy enemyRight = (Enemy) ((fixA.getFilterData().categoryBits == GameWorld.ENEMY_BIT) ? fixA.getUserData() : fixB.getUserData());
+                enemyRight.inRangeAttack = false;
+                break;
+
+            case GameWorld.KNIGHT_SWORD_LEFT | GameWorld.ENEMY_BIT:
+                Enemy enemyLeft = (Enemy) ((fixA.getFilterData().categoryBits == GameWorld.ENEMY_BIT) ? fixA.getUserData() : fixB.getUserData());
+                enemyLeft.inRangeAttack = false;
+                break;
+        }
 
     }
 

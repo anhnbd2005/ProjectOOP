@@ -34,8 +34,8 @@ public class BossHealthBar {
         // Vị trí thanh máu ở trên đầu orc
 //        float barX = groundEnemy.getX()+45/GameWorld.PPM;
 //        float barY = groundEnemy.getY() + groundEnemy.getHeight() / 2 + barHeight+ 20/ GameWorld.PPM;
-        float barX = boss.getX() + boss.getWidth() / 2 / GameWorld.PPM + barWidth +5/ GameWorld.PPM;
-        float barY = boss.getY() + boss.getHeight() / GameWorld.PPM + barHeight + 110 / GameWorld.PPM;
+        float barX = boss.getX() + boss.getWidth() / 2 / GameWorld.PPM + barWidth-40/GameWorld.PPM;
+        float barY = boss.getY() + boss.getHeight() / GameWorld.PPM + barHeight + 70/ GameWorld.PPM;
 //        if (groundEnemy instanceof FlyEnemy)
 //            barY += 13/GameWorld.PPM;
 //        else

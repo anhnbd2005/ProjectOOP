@@ -8,7 +8,7 @@ import com.projectoop.game.screens.PlayScreen;
 public class Orc extends GroundEnemy{
 
     public Orc(PlayScreen screen, float x, float y) {
-        super(screen, x, y, 0.3f, 2);
+        super(screen, x, y, 0, 2, 10);
     }
 
     @Override
@@ -23,16 +23,16 @@ public class Orc extends GroundEnemy{
         dieAnimation = new Animation<TextureRegion>(0.2f, atlasDieing.getRegions());
         hurtAnimation = new Animation<TextureRegion>(0.3f, atlasHurting.getRegions());
     }
-    public void takeDamage(float damage) {
-        currentHealth -= damage;
-        healthBar.update(currentHealth);
-        if(currentHealth<=0) super.destroy();
-    }
-    @Override
-    public void hitOnHead() {
-        takeDamage(50);
-
-    }
+//    public void takeDamage(float damage) {
+//        currentHealth -= damage;
+//        healthBar.update(currentHealth);
+//        if(currentHealth<=0) super.destroy();
+//    }
+//    @Override
+//    public void hitOnHead() {
+//        takeDamage(50);
+//
+//    }
 
     @Override
     public void dispose() {

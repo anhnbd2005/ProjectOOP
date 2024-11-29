@@ -46,7 +46,7 @@ public class Boss extends Enemy{
 
     protected boolean playSoundAttack;
     protected BossHealthBar healthBar;
-    protected float maxHealth = 100; // Ví dụ về máu tối đa
+    protected float maxHealth = 500; // Ví dụ về máu tối đa
     protected float currentHealth;
 
     protected boolean lastDirectionIsRight;
@@ -60,11 +60,15 @@ public class Boss extends Enemy{
 
    // private BossManager1 bossManager;
    private BossManager bossManager;
+    public static float attackRange;
 
-    public Boss(PlayScreen screen, float x, float y, float addY, float scale) {
+    private GroundEnemy.State currentState1;
+
+    public Boss(PlayScreen screen, float x, float y, float addY, float scale,int damage) {
         super(screen, x, y);
         this.addYtoAnim = addY;
         this.scaleX = this.scaleY = scale;
+        this.damage = damage;
 
         lastTimeShoot = 0;
         timeCount = 2;
@@ -81,9 +85,12 @@ public class Boss extends Enemy{
         isHurt = false;
         isHurting = false;
         isDie = false;
+        inRangeAttack = false;
         playSoundAttack = false;
         currentHealth = maxHealth;
         healthBar = new BossHealthBar(this, maxHealth);
+
+        attackRange = 30;
 
 
     }
@@ -116,13 +123,13 @@ public class Boss extends Enemy{
 //        CircleShape shape = new CircleShape();
 //        shape.setRadius(9/GameWorld.PPM);
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(9 / GameWorld.PPM, 15 / GameWorld.PPM);
+        shape.setAsBox(18 / GameWorld.PPM, 25 / GameWorld.PPM);
         //type bit
         fdef.filter.categoryBits = GameWorld.ENEMY_BIT;
         //Collision bit list
         fdef.filter.maskBits = GameWorld.GROUND_BIT |
-            GameWorld.TRAP_BIT | GameWorld.CHEST_BIT |GameWorld.CHEST1_BIT |
-            GameWorld.PILAR_BIT | GameWorld.KNIGHT_BIT | GameWorld.ARROW_BIT;
+            GameWorld.TRAP_BIT | GameWorld.CHEST_BIT| GameWorld.PILAR_BIT | GameWorld.ARROW_BIT |
+            GameWorld.KNIGHT_SWORD_LEFT | GameWorld.KNIGHT_SWORD_RIGHT;
         fdef.shape = shape;
         b2body.createFixture(fdef).setUserData(this);
     }
@@ -150,15 +157,25 @@ public class Boss extends Enemy{
     public void attackingCallBack() {
         attackSound.play();
         isAttack = true;
-        System.out.println("Chem chem chem");
-        screen.getPlayer().hurtingCallBack();
+//        System.out.println("Chem chem chem");
+//        screen.getPlayer().hurtingCallBack();
     }
-
+//    public Boss.State getCurrentState(){
+//        return currentState;
+//    }
     @Override
     public void hurtingCallBack() {
         hurtSound.play();
         hurtKnockBack();
         isHurt = true;
+
+        //take dame
+        currentHealth -= screen.getPlayer().getDamage();
+        if (currentHealth < 0) currentHealth = 0;
+        healthBar.update(currentHealth);
+        if (currentHealth <= 0){
+            isDie = true;
+        }
     }
 
     public TextureRegion getFrame(float dt){
@@ -189,6 +206,7 @@ public class Boss extends Enemy{
         currentState = getState();
         TextureRegion frame;
 
+
         switch (currentState){
             case DEAD:
                 frame = (TextureRegion) dieAnimation.getKeyFrame(stateTime, false);
@@ -207,7 +225,7 @@ public class Boss extends Enemy{
             default:
                 frame = walkAnimation.getKeyFrame(stateTime, true);
         }
-
+        if (currentState != State.ATTACKING) {
         if ((b2body.getLinearVelocity().x < 0 || !runningRight) && !frame.isFlipX()){
             frame.flip(true, false);
             runningRight = false;
@@ -215,7 +233,7 @@ public class Boss extends Enemy{
         else if ((b2body.getLinearVelocity().x > 0 || runningRight) && frame.isFlipX()){
             frame.flip(true, false);
             runningRight = true;
-        }
+        }}
 
         stateTime = (currentState == previousState) ? stateTime + dt : 0;
         previousState = currentState;
@@ -225,7 +243,13 @@ public class Boss extends Enemy{
     public State getState(){
 
         //die and hurt code
-        if (isDie){//test
+        if (isDie){
+            isDie = false;
+            isDieing = true;
+            this.velocity.x = 0;
+            return State.DEAD;
+        }
+        if (isDieing){
             if (dieAnimation.isAnimationFinished(stateTime)) {
                 destroy();
             }
@@ -279,6 +303,15 @@ public class Boss extends Enemy{
             stateTime = 0;
         }
         else if (!destroyed){
+            Vector2 playerPosition = screen.getPlayer().b2body.getPosition();
+            float speed = 1.0f; // Tốc độ di chuyển của Boss
+            if ((b2body.getPosition().x+200/GameWorld.PPM < playerPosition.x) && runningRight == false) {
+                velocity.x = speed; // Di chuyển sang phải
+                runningRight = true;
+            } else if((b2body.getPosition().x-200/GameWorld.PPM > playerPosition.x) && runningRight == true) {
+                velocity.x = -speed; // Di chuyển sang trái
+                runningRight = false;
+            }
             TextureRegion frame = getFrame(dt);
             b2body.setLinearVelocity(velocity);
             setPosition(b2body.getPosition().x - getWidth()/2, b2body.getPosition().y - getHeight()/2);

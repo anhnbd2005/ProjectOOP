@@ -93,7 +93,7 @@ public class B2WorldCreator {
         for (MapObject object : map.getLayers().get(16).getObjects().getByType(RectangleMapObject.class)){
             Rectangle rect = ((RectangleMapObject)object).getRectangle();
             //  groundEnemies.add(new Orc(screen, rect.getX() / GameWorld.PPM, rect.y / GameWorld.PPM));
-            bosses.add(new Boss(screen, rect.getX() / GameWorld.PPM, rect.y / GameWorld.PPM,50,1.5f));
+            bosses.add(new Boss(screen, rect.getX() / GameWorld.PPM, rect.y / GameWorld.PPM,35,1.5f,30));
         }
 
     }

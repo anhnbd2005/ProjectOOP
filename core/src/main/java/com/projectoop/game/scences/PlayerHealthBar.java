@@ -12,7 +12,7 @@ import com.projectoop.game.GameWorld;
 import com.projectoop.game.screens.PlayScreen;
 import com.projectoop.game.sprites.Knight;
 
-public class HealthBar {
+public class PlayerHealthBar {
     private Texture HeroHealthBar,HeroHealth;
     private Texture BossHealthBar,BossHealth;
     private PlayScreen screen;
@@ -26,7 +26,7 @@ public class HealthBar {
     private ShapeRenderer shapeRenderer = new ShapeRenderer(); // test
 
 
-    public HealthBar(PlayScreen screen) {
+    public PlayerHealthBar(PlayScreen screen) {
         HeroHealthBar = new Texture("HealthBar/bg.png");
         HeroHealth =  new Texture("HealthBar/red.png");
 
@@ -46,8 +46,8 @@ public class HealthBar {
 
 //        // draw Hero HeroHeroHealthBar
        // batch.begin();
-        float x = screen.getCamera().position.x-screen.getGamePort().getWorldWidth()-100/GameWorld.PPM;
-        float y = 175/GameWorld.PPM+screen.getCamera().position.y+screen.getGamePort().getWorldHeight()/2;
+        float x = screen.getGameCam().position.x-screen.getGamePort().getWorldWidth()-100/GameWorld.PPM;
+        float y = 175/GameWorld.PPM+screen.getGameCam().position.y+screen.getGamePort().getWorldHeight()/2;
 
 
 

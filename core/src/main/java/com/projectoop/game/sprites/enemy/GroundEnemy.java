@@ -46,10 +46,11 @@ public abstract class GroundEnemy extends Enemy{
 
     public static float attackRange;
 
-    public GroundEnemy(PlayScreen screen, float x, float y, float addY, float scale) {
+    public GroundEnemy(PlayScreen screen, float x, float y, float addY, float scale, int damage) {
         super(screen, x, y);
         this.addYtoAnim = addY;
         this.scaleX = this.scaleY = scale;
+        this.damage = damage;
 
         currentState = State.WALKING;
         previousState = State.WALKING;
@@ -141,6 +142,10 @@ public abstract class GroundEnemy extends Enemy{
         //  System.out.println("Chem chem chem");
         // screen.getPlayer().hurtingCallBack();
     }
+    public State getCurrentState(){
+        return currentState;
+    }
+
 
     @Override
     public void hurtingCallBack() {
@@ -253,9 +258,9 @@ public abstract class GroundEnemy extends Enemy{
     public void update(float dt){
         stateTime += dt;
         if (setToDestroy && !destroyed){
-            world.destroyBody(b2body);
+//            world.destroyBody(b2body);
             destroyed = true;
-            screen.creator.getGroundEnemies().removeValue(this, true);
+//            screen.creator.getGroundEnemies().removeValue(this, true);
             stateTime = 0;
         }
         else if (!destroyed){
@@ -276,14 +281,14 @@ public abstract class GroundEnemy extends Enemy{
             healthBar.draw(batch);
         }
     }
-    public void takeDamage(float damage) {
-        currentHealth -= damage;
-        healthBar.update(currentHealth);
-        if(currentHealth<=0) destroy();
-    }
+//    public void takeDamage(float damage) {
+//        currentHealth -= damage;
+//        healthBar.update(currentHealth);
+//        if(currentHealth<=0) destroy();
+//    }
     @Override
     public void hitOnHead() {
-       takeDamage(50);
+      // takeDamage(50);
     }
     public abstract void dispose();
     public void setVelocity(Vector2 velocity) {

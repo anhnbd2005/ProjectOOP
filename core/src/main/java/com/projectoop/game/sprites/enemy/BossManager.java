@@ -29,7 +29,7 @@ public class BossManager {
         GroundEnemy groundEnemy;
         switch (name){
             case "Goblin":
-                groundEnemy = new FlyEnemy(screen, x, y);
+                groundEnemy = new Goblin(screen, x, y);
                 break;
             case "Orc":
                 groundEnemy = new Orc(screen, x, y);

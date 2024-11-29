@@ -52,8 +52,8 @@ public class Knight extends Sprite {
     private Animation<TextureRegion> knightStand;
 
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
-    public int Health;
-    public int HealthMax;
+    private int health;
+    private int healthMax;
 
     private Sound knightRunSound;
     private Sound knightJumpSound;
@@ -68,10 +68,12 @@ public class Knight extends Sprite {
     private float lastTimeShoot;
     private float timeCountShoot;
     private float timeCountAttack;
+    private float untilCount;
     private final float SHOOTING_COOL_DOWN = 1;
     private final float ATTACKING_COOL_DOWN = 0.5f;
     private float timeCountBig;
     private final float BIG_TIMER = 5;
+    public final float UNTIL_COOL_DOWN = 10;
 
     private boolean isRunningRight;
     private boolean isHurt;
@@ -89,8 +91,8 @@ public class Knight extends Sprite {
     private boolean playSound2;
 
     public Knight(PlayScreen screen){
-        Health = 100;        // Giá trị khởi tạo cho sức khỏe hiện tại
-        HealthMax = 100;
+        health = 300;
+        healthMax = 300;
 
         this.screen = screen;
         this.world = screen.getWorld();
@@ -106,6 +108,7 @@ public class Knight extends Sprite {
         timeCountShoot = 2;
         timeCountAttack = 1;
         timeCountBig = 0;
+        untilCount = UNTIL_COOL_DOWN;
         isRunningRight = true;
 
         prepareAnimation();
@@ -223,7 +226,7 @@ public class Knight extends Sprite {
         //sword hit right sensor
         EdgeShape swordRight = new EdgeShape();
         swordRight.set(new Vector2(20/GameWorld.PPM, -6/GameWorld.PPM),
-            new Vector2(20/GameWorld.PPM, 6/GameWorld.PPM));
+            new Vector2(20/GameWorld.PPM, 10/GameWorld.PPM));
         fdef.filter.categoryBits = GameWorld.KNIGHT_SWORD_RIGHT;
         fdef.shape = swordRight;
         fdef.isSensor = true;
@@ -231,7 +234,7 @@ public class Knight extends Sprite {
         //sword hit left sensor
         EdgeShape swordLeft = new EdgeShape();
         swordLeft.set(new Vector2(-20/GameWorld.PPM, -6/GameWorld.PPM),
-            new Vector2(-20/GameWorld.PPM, 6/GameWorld.PPM));
+            new Vector2(-20/GameWorld.PPM, 10/GameWorld.PPM));
         fdef.filter.categoryBits = GameWorld.KNIGHT_SWORD_LEFT;
         fdef.shape = swordLeft;
         fdef.isSensor = true;
@@ -268,8 +271,8 @@ public class Knight extends Sprite {
         b2body.createFixture(fdef).setUserData(this);
         //sword hit right sensor
         EdgeShape swordRight = new EdgeShape();
-        swordRight.set(new Vector2(50/GameWorld.PPM, -20/GameWorld.PPM),
-            new Vector2(50/GameWorld.PPM, 20/GameWorld.PPM));
+        swordRight.set(new Vector2(25/GameWorld.PPM, -20/GameWorld.PPM),
+            new Vector2(25/GameWorld.PPM, 20/GameWorld.PPM));
         fdef.filter.categoryBits = GameWorld.KNIGHT_SWORD_RIGHT;
         fdef.shape = swordRight;
         fdef.isSensor = true;
@@ -285,12 +288,15 @@ public class Knight extends Sprite {
     }
 
     public void bigMode(){
-        isBig = true;
-        b2body.setTransform(b2body.getPosition().x, b2body.getPosition().y + 40/GameWorld.PPM,0);
-        Knight.scaleX = Knight.scaleY = 3;
-        Arrow.scaleX = Arrow.scaleY = 3;
-        redefineKnight();
-        GroundEnemy.attackRange = 70;
+        if (untilCount >= UNTIL_COOL_DOWN) {
+            isBig = true;
+            b2body.setTransform(b2body.getPosition().x, b2body.getPosition().y + 40 / GameWorld.PPM, 0);
+            Knight.scaleX = Knight.scaleY = 3;
+            Arrow.scaleX = Arrow.scaleY = 3;
+            redefineKnight();
+            GroundEnemy.attackRange = 70;
+            untilCount = 0;
+        }
     }
     public void endBigMode(){
         isBig = false;
@@ -306,9 +312,16 @@ public class Knight extends Sprite {
         return (currentState == State.ATTACKING1 || currentState == State.ATTACKING2);
     }
 
-    public void hurtingCallBack(){
+    public void hurtingCallBack(int dame){
         isHurt = true;
         knightHurtSound.play();
+
+        health -= dame;
+        if (health <= 0){
+            health = 0;
+            setDie();
+            isHurt = false;
+        }
     }
 
     public boolean isEndGame(){
@@ -322,6 +335,10 @@ public class Knight extends Sprite {
     public int getDamage(){
         return damage;
     }
+    public float getEnergy(){
+        return untilCount;
+    }
+
 
     public void setDie(){
         deathCount--;
@@ -339,20 +356,20 @@ public class Knight extends Sprite {
         if (timeCountAttack > ATTACKING_COOL_DOWN){
             isAttacking1 = true;
             timeCountAttack = 0;
-            for (Enemy enemy : screen.creator.getGroundEnemies())
-                if (enemy.inRangeAttack && enemy.isUsable()) {
-                    enemy.hurtingCallBack();
-                }
+//            for (Enemy enemy : screen.creator.getGroundEnemies())
+//                if (enemy.inRangeAttack && enemy.isUsable()) {
+//                    enemy.hurtingCallBack();
+//                }
         }
     }
     public void attack2CallBack(){
         if (timeCountAttack > ATTACKING_COOL_DOWN){
             isAttacking2 = true;
             timeCountAttack = 0;
-            for (Enemy enemy : screen.creator.getGroundEnemies())
-                if (enemy.inRangeAttack && enemy.isUsable()) {
-                    enemy.hurtingCallBack();
-                }
+//            for (Enemy enemy : screen.creator.getGroundEnemies())
+//                if (enemy.inRangeAttack && enemy.isUsable()) {
+//                    enemy.hurtingCallBack();
+//                }
         }
     }
     public void attack3CallBack(){
@@ -365,6 +382,9 @@ public class Knight extends Sprite {
     public TextureRegion getFrame(float dt){
         timeCountShoot += dt;
         timeCountAttack += dt;
+        if (untilCount < UNTIL_COOL_DOWN && !isBig) untilCount += dt;
+        if (untilCount > UNTIL_COOL_DOWN && !isBig) untilCount = UNTIL_COOL_DOWN;
+        System.out.println("untilCount: " + untilCount);
 
         currentState = getState();
         TextureRegion region;
@@ -428,8 +448,9 @@ public class Knight extends Sprite {
             }
             if (deathCount <= 0) endGame = true;
             else {
-                b2body.setTransform(32 / GameWorld.PPM, 250 / GameWorld.PPM, 0);
+                b2body.setTransform(100 / GameWorld.PPM, 250 / GameWorld.PPM, 0);
                 isDie = false;
+                health = healthMax;
             }
         }
 
@@ -518,11 +539,11 @@ public class Knight extends Sprite {
         bulletManager.draw(batch);
     }
     public int getHealth() {
-        return Health;
+        return health;
     }
 
     public int getHealthMax() {
 
-        return HealthMax;
+        return healthMax;
     }
 }

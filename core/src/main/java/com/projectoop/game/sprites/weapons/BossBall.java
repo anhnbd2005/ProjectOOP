@@ -13,6 +13,9 @@ import com.projectoop.game.screens.PlayScreen;
 public class BossBall extends Bullet{
     private final float scaleX = 1.2f;
     private final float scaleY = 1.2f;
+
+    public final int damage = 20;
+
     TextureAtlas atlasShooting;
     private Animation<TextureRegion> shootingAnim;
     public BossBall(PlayScreen screen, float x, float y, int direction) {

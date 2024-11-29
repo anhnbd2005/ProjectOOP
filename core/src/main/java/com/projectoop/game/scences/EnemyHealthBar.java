@@ -32,10 +32,6 @@ public class EnemyHealthBar {
         float healthPercentage = currentHealth / maxHealth;
         float barWidth = 50 / GameWorld.PPM;
         float barHeight = 8 / GameWorld.PPM;
-
-        // Vị trí thanh máu ở trên đầu orc
-//        float barX = groundEnemy.getX()+45/GameWorld.PPM;
-//        float barY = groundEnemy.getY() + groundEnemy.getHeight() / 2 + barHeight+ 20/ GameWorld.PPM;
        float barX = groundEnemy.getX() + groundEnemy.getWidth() / 2 / GameWorld.PPM + barWidth -5/ GameWorld.PPM;
         float barY = groundEnemy.getY() + groundEnemy.getHeight() / GameWorld.PPM + barHeight + 65 / GameWorld.PPM;
         if (groundEnemy instanceof FlyEnemy)

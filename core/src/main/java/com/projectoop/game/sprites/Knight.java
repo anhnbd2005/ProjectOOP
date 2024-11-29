@@ -448,7 +448,7 @@ public class Knight extends Sprite {
             }
             if (deathCount <= 0) endGame = true;
             else {
-                b2body.setTransform(100 / GameWorld.PPM, 250 / GameWorld.PPM, 0);
+                b2body.setTransform(150 / GameWorld.PPM, 250 / GameWorld.PPM, 0);
                 isDie = false;
                 health = healthMax;
             }
